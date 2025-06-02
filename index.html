@@ -278,6 +278,252 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* 아이폰 15 및 모바일 최적화 스타일 */
+        @media (max-width: 414px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+                border-radius: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+                line-height: 1.2;
+                margin-bottom: 10px;
+            }
+            
+            .header p {
+                font-size: 0.9em;
+                margin-bottom: 0;
+            }
+            
+            .controls {
+                margin-bottom: 15px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .pdf-btn, .refresh-btn, .refresh-guide-btn {
+                width: 100%;
+                max-width: 280px;
+                padding: 15px 20px;
+                font-size: 0.95em;
+                border-radius: 12px;
+                margin: 5px 0;
+            }
+            
+            .overall-stats {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            .overall-stats h2 {
+                font-size: 1.4em;
+                margin-bottom: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-item {
+                padding: 15px 10px;
+                border-radius: 8px;
+            }
+            
+            .stat-number {
+                font-size: 1.8em;
+                margin-bottom: 3px;
+            }
+            
+            .stat-label {
+                font-size: 0.8em;
+                margin-bottom: 5px;
+            }
+            
+            .stat-detail {
+                font-size: 0.75em;
+            }
+            
+            .charts-container {
+                gap: 20px;
+            }
+            
+            .chart-item {
+                padding: 15px;
+                border-radius: 8px;
+            }
+            
+            .chart-title {
+                font-size: 1.1em;
+                margin-bottom: 10px;
+            }
+            
+            canvas {
+                max-height: 300px;
+            }
+            
+            .stats {
+                padding: 12px;
+                font-size: 0.85em;
+                line-height: 1.4;
+            }
+            
+            .gender-chart {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+            
+            .gender-item {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+            
+            .last-updated {
+                padding: 8px;
+                font-size: 0.8em;
+                margin-top: 10px;
+            }
+            
+            .error-message, .success-message, .loading {
+                padding: 12px;
+                font-size: 0.9em;
+                border-radius: 6px;
+                margin: 15px 0;
+            }
+            
+            .sample-warning, .refresh-notice {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 10px;
+                font-size: 0.95em;
+            }
+            
+            .sample-warning h3, .refresh-notice h3 {
+                font-size: 1.1em;
+                margin-bottom: 8px;
+            }
+        }
+        
+        /* 아이폰 15 Pro/Max 및 더 큰 모바일 화면 */
+        @media (min-width: 415px) and (max-width: 767px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .controls {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .pdf-btn, .refresh-btn, .refresh-guide-btn {
+                min-width: 140px;
+                padding: 12px 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            canvas {
+                max-height: 350px;
+            }
+        }
+        
+        /* 터치 친화적 스타일 */
+        @media (hover: none) and (pointer: coarse) {
+            .pdf-btn, .refresh-btn, .refresh-guide-btn {
+                min-height: 48px;
+                padding: 15px 25px;
+                font-size: 1em;
+                touch-action: manipulation;
+            }
+            
+            .pdf-btn:active, .refresh-btn:active, .refresh-guide-btn:active {
+                transform: scale(0.98);
+                transition: transform 0.1s;
+            }
+        }
+        
+        /* 가로 모드 최적화 */
+        @media (max-width: 926px) and (orientation: landscape) {
+            .overall-stats {
+                margin: 10px 0;
+                padding: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-item {
+                padding: 10px;
+            }
+            
+            .stat-number {
+                font-size: 1.5em;
+            }
+            
+            .chart-item {
+                padding: 15px;
+            }
+            
+            canvas {
+                max-height: 250px;
+            }
+        }
+        
+        /* 매우 작은 화면 (320px 이하) */
+        @media (max-width: 320px) {
+            body {
+                padding: 5px;
+                font-size: 13px;
+            }
+            
+            .container {
+                padding: 15px 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .chart-title {
+                font-size: 1em;
+            }
+            
+            .pdf-btn, .refresh-btn, .refresh-guide-btn {
+                font-size: 0.9em;
+                padding: 12px 15px;
+            }
+        }
     </style>
 </head>
 <body>
