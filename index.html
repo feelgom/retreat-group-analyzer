@@ -206,6 +206,67 @@
         .last-updated strong {
             color: #333;
         }
+        .sample-mode {
+            position: relative;
+        }
+        .sample-mode .charts-container {
+            filter: blur(2px);
+            opacity: 0.7;
+        }
+        .sample-mode .overall-stats {
+            filter: blur(1px);
+            opacity: 0.8;
+        }
+        .sample-warning {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            color: #d63031;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid #e17055;
+            box-shadow: 0 4px 15px rgba(209, 48, 49, 0.2);
+            font-weight: bold;
+            font-size: 1.1em;
+            position: relative;
+            z-index: 10;
+        }
+        .sample-warning h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.3em;
+            color: #2d3436;
+        }
+        .refresh-notice {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            color: #2d3436;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid #e17055;
+            box-shadow: 0 4px 15px rgba(225, 112, 85, 0.2);
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .refresh-notice h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.3em;
+            color: #2d3436;
+        }
+        .refresh-guide-btn {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        .refresh-guide-btn:hover {
+            transform: translateY(-2px);
+        }
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -273,6 +334,7 @@
 
     <script>
         let chartInstances = [];
+        let isSampleMode = false; // 샘플 데이터 모드 플래그
         
         // 구글 시트 CSV URL
         const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1gmzAJM8JgGG8fRewoPShRh4j0nWJ7LeO/export?format=csv&gid=1530529588';
@@ -291,7 +353,11 @@
             
             const lastUpdatedElement = document.querySelector('.last-updated');
             if (lastUpdatedElement) {
-                lastUpdatedElement.innerHTML = `<strong>마지막 업데이트:</strong> ${timeString}`;
+                if (isSampleMode) {
+                    lastUpdatedElement.innerHTML = `<strong>샘플 데이터 로드 시간:</strong> ${timeString}`;
+                } else {
+                    lastUpdatedElement.innerHTML = `<strong>마지막 업데이트:</strong> ${timeString}`;
+                }
             }
         }
 
@@ -305,14 +371,60 @@
             
             if (type !== 'loading') {
                 setTimeout(() => {
-                    messageContainer.innerHTML = '';
+                    if (!isSampleMode) { // 샘플 모드가 아닐 때만 메시지 제거
+                        messageContainer.innerHTML = '';
+                    }
                 }, 5000);
+            }
+        }
+
+        // CORS 오류 시 새로고침 안내 표시
+        function showRefreshNotice() {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="refresh-notice">
+                    <h3>🚫 데이터 접근 제한</h3>
+                    <p>보안 정책(CORS)으로 인해 구글 시트 데이터에 접근할 수 없습니다.</p>
+                    <p><strong>페이지를 새로고침</strong>하거나 잠시 후 다시 시도해주세요.</p>
+                    <button class="refresh-guide-btn" onclick="location.reload()">
+                        🔄 페이지 새로고침
+                    </button>
+                </div>
+            `;
+        }
+
+        // 샘플 데이터 경고 표시
+        function showSampleWarning() {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="sample-warning">
+                    <h3>⚠️ 샘플 데이터 모드</h3>
+                    <p>현재 표시되는 데이터는 <strong>샘플 데이터</strong>입니다.</p>
+                    <p>실제 수련회 데이터를 보려면 위의 <strong>"데이터 새로고침"</strong> 버튼을 클릭하거나 페이지를 새로고침해주세요.</p>
+                </div>
+            `;
+        }
+
+        // 샘플 모드 UI 적용/제거
+        function toggleSampleMode(enable) {
+            const container = document.querySelector('.container');
+            if (enable) {
+                container.classList.add('sample-mode');
+                isSampleMode = true;
+                showSampleWarning();
+            } else {
+                container.classList.remove('sample-mode');
+                isSampleMode = false;
+                document.getElementById('messageContainer').innerHTML = '';
             }
         }
 
         // 구글 시트에서 데이터 가져오기 (JSONP 방식)
         async function loadGoogleSheetData() {
             try {
+                // 샘플 모드 해제
+                toggleSampleMode(false);
+                
                 showMessage('🔄 구글 시트에서 데이터를 가져오는 중...', 'loading');
                 
                 // 캐시 무효화를 위한 타임스탬프 추가
@@ -426,11 +538,13 @@
                 
             } catch (error) {
                 console.error('대안 방법도 실패:', error);
-                showMessage('❌ 구글 시트 데이터를 불러올 수 없습니다. CORS 정책으로 인한 제한입니다. CSV 파일을 직접 업로드해 주세요.', 'error');
                 
-                // 최종적으로 샘플 데이터로 대체
+                // CORS 오류 안내 및 새로고침 권장
+                showRefreshNotice();
+                
+                // 3초 후 샘플 데이터로 전환
                 setTimeout(() => {
-                    showMessage('📊 샘플 데이터로 차트를 표시합니다. 실제 데이터를 보려면 CSV 파일을 업로드해주세요.', 'info');
+                    toggleSampleMode(true);
                     loadSampleData();
                 }, 3000);
             }
@@ -759,6 +873,11 @@
 
         // 샘플 데이터로 시작
         function loadSampleData() {
+            // 샘플 모드 활성화 (이미 활성화되어 있지 않다면)
+            if (!isSampleMode) {
+                toggleSampleMode(true);
+            }
+            
             // 샘플 데이터 생성 (실제 데이터를 업로드하면 대체됩니다)
             const sampleData = [];
             const groups = [1, 2, 3, 4, 5];
