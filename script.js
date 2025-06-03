@@ -445,7 +445,7 @@ let chartInstances = [];
 
             if (totalMembers > 0) {
                 const maleProportion = maleMembers / totalMembers;
-                if (maleProportion > 0.3) {
+                if (maleProportion < 0.3 || maleProportion > 0.7) {
                     chartItem.classList.add('highlight-ratio');
                 }
             }
