@@ -2,7 +2,7 @@ let chartInstances = [];
         let isSampleMode = false; // 샘플 데이터 모드 플래그
         
         // 구글 시트 CSV URL
-        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1gmzAJM8JgGG8fRewoPShRh4j0nWJ7LeO/export?format=csv&gid=1530529588';
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/133kd0RK7ye_M0BsCwb6occ8SFVEvXXN_/export?format=csv&gid=1530529588';
 
         // 마지막 업데이트 시간 표시 함수
         function updateLastUpdatedTime() {
